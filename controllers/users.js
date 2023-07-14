@@ -35,6 +35,11 @@ module.exports.getUserId = (req, res) => {
     .orFail()
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
+      if (err.message.indexOf('Cast to ObjectId failed')) {
+        return res.status(400).send({
+          message: 'Передан некорректный _id пользователя',
+        });
+      }
       if (err.message.indexOf('not found')) {
         return res.status(404).send({
           message: 'Пользователь с указанным _id не найден',

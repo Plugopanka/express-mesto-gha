@@ -32,7 +32,14 @@ module.exports.createCard = (req, res) => {
 
 module.exports.deleteCard = (req, res) => {
   Card.findByIdAndRemove(req.params.cardId)
-    .then((card) => res.status(200).send({ data: card }))
+    .then((card) => {
+      if (typeof card === mongoose.Schema.Types.ObjectId) {
+        return res.status(400).send({
+          message: 'Переданы некорректные данные при создании карточки',
+        });
+      }
+      return res.status(200).send({ data: card })
+    })
     .catch((err) =>
     {
       if (err.message.indexOf('Cast to ObjectId failed')) {
