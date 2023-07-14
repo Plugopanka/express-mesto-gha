@@ -6,7 +6,7 @@ module.exports.getUsers = (req, res) => {
     .catch((err) => {
       if (err.message.indexOf('Cast to ObjectId failed')) {
         return res.status(400).send({
-          message: 'Переданы некорректные данные при создании пользователя',
+          message: 'Переданы некорректные данные при получении пользователя',
         });
       }
 
