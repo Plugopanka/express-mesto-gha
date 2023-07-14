@@ -3,26 +3,26 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: ["eslint:recommended", "plugin:react/recommended", "airbnb-base"],
+  extends: ['eslint:recommended', 'plugin:react/recommended', 'airbnb-base'],
   overrides: [
     {
       env: {
         node: true,
       },
-      files: [".eslintrc.{js,cjs}"],
+      files: ['.eslintrc.{js,cjs}'],
       parserOptions: {
-        sourceType: "script",
+        sourceType: 'script',
       },
     },
   ],
   parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
+    ecmaVersion: 'latest',
+    sourceType: 'module',
   },
-  plugins: ["react"],
+  plugins: ['react'],
   rules: {
-    "no-console": "off",
-    "no-underscore-dangle": ["error", { "allow": ["_id"] }],
+    'no-console': 'off',
+    'no-underscore-dangle': ['error', { allow: ['_id'] }],
   },
 
 };

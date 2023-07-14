@@ -1,16 +1,16 @@
-const User = require("../models/user");
+const User = require('../models/user');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(200).send({ data: users }))
     .catch((err) => {
-      if (err.errors.err.name === "CastError") {
+      if (err.message.indexOf('Cast to ObjectId failed')) {
         return res.status(400).send({
-          message: "Переданы некорректные данные при создании пользователя",
+          message: 'Переданы некорректные данные при создании пользователя',
         });
       }
 
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
 };
 
@@ -20,13 +20,13 @@ module.exports.createUser = (req, res) => {
   User.create({ name, about, avatar })
     .then((user) => res.status(201).send({ data: user }))
     .catch((err) => {
-      if (err.errors.err.name === "CastError") {
+      if (err.message.indexOf('Cast to ObjectId failed')) {
         return res.status(400).send({
-          message: "Переданы некорректные данные при создании пользователя",
+          message: 'Переданы некорректные данные при создании пользователя',
         });
       }
 
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
 };
 
@@ -35,13 +35,13 @@ module.exports.getUserId = (req, res) => {
     .orFail()
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.errors.err.name === "DocumentNotFoundError") {
+      if (err.message.indexOf('not found')) {
         return res.status(404).send({
-          message: "Пользователь с указанным _id не найден",
+          message: 'Пользователь с указанным _id не найден',
         });
       }
 
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
 };
 
@@ -54,23 +54,23 @@ module.exports.changeUserInfo = (req, res) => {
       new: true,
       runValidators: true,
       upsert: true,
-    }
+    },
   )
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.errors.err.name === "CastError") {
+      if (err.message.indexOf('Cast to ObjectId failed')) {
         return res.status(400).send({
-          message: "Переданы некорректные данные при обновлении профиля",
+          message: 'Переданы некорректные данные при обновлении профиля',
         });
       }
 
-      if (err.errors.err.name === "DocumentNotFoundError") {
+      if (err.message.indexOf('not found')) {
         return res.status(404).send({
-          message: "Пользователь с указанным _id не найден",
+          message: 'Пользователь с указанным _id не найден',
         });
       }
 
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
 };
 
@@ -83,22 +83,22 @@ module.exports.changeUserAvatar = (req, res) => {
       new: true,
       runValidators: true,
       upsert: true,
-    }
+    },
   )
     .then((user) => res.status(200).send({ data: user }))
     .catch((err) => {
-      if (err.errors.err.name === "CastError") {
+      if (err.message.indexOf('Cast to ObjectId failed')) {
         return res.status(400).send({
-          message: "Переданы некорректные данные при обновлении аватара",
+          message: 'Переданы некорректные данные при обновлении аватара',
         });
       }
 
-      if (err.errors.err.name === "DocumentNotFoundError") {
+      if (err.message.indexOf('not found')) {
         return res.status(404).send({
-          message: "Пользователь с указанным _id не найден",
+          message: 'Пользователь с указанным _id не найден',
         });
       }
 
-      res.status(500).send({ message: err.message });
+      return res.status(500).send({ message: err.message });
     });
 };
