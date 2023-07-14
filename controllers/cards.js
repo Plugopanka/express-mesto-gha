@@ -2,6 +2,7 @@ const Card = require('../models/card');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
+    .populate('user')
     .then((cards) => res.status(200).send({ data: cards }))
     .catch((err) => {
       if (err.name === "CastError") {
@@ -15,9 +16,9 @@ module.exports.getCards = (req, res) => {
 };
 
 module.exports.createCard = (req, res) => {
-  const { name, link } = req.body;
+  const { name, link, userId } = req.body;
   console.log(req.user._id);
-  Card.create({ name, link })
+  Card.create({ name, link, user: userId })
     .then((card) => res.status(201).send({ data: card }))
     .catch((err) => {
       if (err.name === "CastError") {
@@ -31,7 +32,7 @@ module.exports.createCard = (req, res) => {
 };
 
 module.exports.deleteCard = (req, res) => {
-  Card.findByIdAndRemove(req.user._id)
+  Card.findByIdAndRemove(req.params.cardId)
     .then((card) => res.status(200).send({ data: card }))
     .catch((err) => res.status(404).send({ message: "Карточка с указанным _id не найдена" }));
 };
