@@ -10,7 +10,7 @@
     "start": "node app.js",
     "dev": "nodemon app.js"
   },
-  "author": "",
+  "author": "Mariia Ionova",
   "license": "ISC",
   "devDependencies": {
     "eslint": "^8.44.0",
