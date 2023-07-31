@@ -4,14 +4,7 @@ const User = require('../models/user');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-const {
-  STATUS_CODE_POST,
-  ERROR_BAD_REQUEST,
-  ERROR_UNAUTHORIZED,
-  ERROR_NOT_FOUND,
-  ERROR_REQUEST_CONFLICT,
-  ERROR_ON_SERVER,
-} = require('../errors/errors');
+const { STATUS_CODE_POST } = require('../errors/errors');
 const BadRequestError = require('../errors/BadRequestError');
 const UnauthorizedError = require('../errors/UnauthorizedError');
 const NotFoundError = require('../errors/NotFoundError');
@@ -49,7 +42,11 @@ module.exports.createUser = (req, res, next) => {
   bcrypt
     .hash(password, 10)
     .then((hash) => User.create({
-      email, password: hash, name, about, avatar,
+      email,
+      password: hash,
+      name,
+      about,
+      avatar,
     }))
     .then((user) => res.status(STATUS_CODE_POST).send({ data: user }))
     .catch((err) => {
@@ -58,7 +55,11 @@ module.exports.createUser = (req, res, next) => {
       }
 
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при создании пользователя'));
+        next(
+          new BadRequestError(
+            'Переданы некорректные данные при создании пользователя',
+          ),
+        );
       }
 
       next(err);
@@ -99,7 +100,11 @@ module.exports.changeUserInfo = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при обновлении профиля'));
+        next(
+          new BadRequestError(
+            'Переданы некорректные данные при обновлении профиля',
+          ),
+        );
       }
 
       if (err.message === 'NotFound') {
@@ -126,7 +131,11 @@ module.exports.changeUserAvatar = (req, res, next) => {
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при обновлении аватара'));
+        next(
+          new BadRequestError(
+            'Переданы некорректные данные при обновлении аватара',
+          ),
+        );
       }
 
       if (err.message === 'NotFound') {
@@ -142,10 +151,14 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id }, NODE_ENV === 'production' ? JWT_SECRET : 'secret', { expiresIn: '7d' });
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : 'secret',
+        { expiresIn: '7d' },
+      );
       res.send({ token });
     })
-    .catch((err) => {
+    .catch(() => {
       next(new UnauthorizedError('Переданы некорректные email или пароль'));
     });
 };

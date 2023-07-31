@@ -1,14 +1,9 @@
 const Card = require('../models/card');
-const {
-  STATUS_CODE_POST,
-  ERROR_BAD_REQUEST,
-  ERROR_NOT_FOUND,
-  ERROR_ON_SERVER,
-} = require('../errors/errors');
+const { STATUS_CODE_POST } = require('../errors/errors');
 const BadRequestError = require('../errors/BadRequestError');
-const UnauthorizedError = require('../errors/UnauthorizedError');
+// const UnauthorizedError = require('../errors/UnauthorizedError');
 const NotFoundError = require('../errors/NotFoundError');
-const RequestConflict = require('../errors/RequestConflict');
+// const RequestConflict = require('../errors/RequestConflict');
 
 module.exports.getCards = (req, res, next) => {
   Card.find({})
@@ -23,7 +18,11 @@ module.exports.createCard = (req, res, next) => {
     .then((card) => res.status(STATUS_CODE_POST).send({ data: card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new BadRequestError('Переданы некорректные данные при создании карточки'));
+        next(
+          new BadRequestError(
+            'Переданы некорректные данные при создании карточки',
+          ),
+        );
       }
 
       next(err);
@@ -38,7 +37,11 @@ module.exports.deleteCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные при удалении карточки'));
+        next(
+          new BadRequestError(
+            'Переданы некорректные данные при удалении карточки',
+          ),
+        );
       }
       if (err.message === 'NotFound') {
         next(new NotFoundError('Карточка с указанным _id не найдена'));
@@ -60,7 +63,11 @@ module.exports.likeCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные для постановки лайка'));
+        next(
+          new BadRequestError(
+            'Переданы некорректные данные для постановки лайка',
+          ),
+        );
       }
 
       if (err.message === 'NotFound') {
@@ -83,7 +90,9 @@ module.exports.dislikeCard = (req, res, next) => {
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new BadRequestError('Переданы некорректные данные для снятия лайка'));
+        next(
+          new BadRequestError('Переданы некорректные данные для снятия лайка'),
+        );
       }
 
       if (err.message === 'NotFound') {
