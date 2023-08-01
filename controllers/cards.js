@@ -30,15 +30,15 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
+    // .orFail(() => {
+    //   throw new Error('NotFound');
+    // })
     .then((card) => {
       if (!card.owner.equals(req.user._id)) {
         return next(new ForbiddenError('Нет доступа для удаления карточки'));
       }
       Card.deleteOne()
-        .then((card) => res.send({ data: card }))
+        .then(() => res.send({ data: card }))
         .catch(next);
     })
     .catch((err) => {

@@ -51,10 +51,7 @@ app.post(
 );
 
 app.use('/*', auth, (req, res, next) => {
-  if (err.message === 'NotFound') {
-    next(new NotFoundError('Страница не найдена'));
-  }
-  next(err);
+  next(new NotFoundError('Страница не найдена'));
 });
 
 app.use(errors());
