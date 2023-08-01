@@ -1,6 +1,6 @@
 [![Tests](../../actions/workflows/tests-13-sprint.yml/badge.svg)](../../actions/workflows/tests-13-sprint.yml) [![Tests](../../actions/workflows/tests-14-sprint.yml/badge.svg)](../../actions/workflows/tests-14-sprint.yml)
 # Проект Mesto фронтенд + бэкенд
-Проект серверной части сайта Mesto с реализацией регистрации и аутентификации
+Проект серверной части сайта Mesto с реализацией аутентификации и регистрации
 ## Репозиторий
 https://github.com/Plugopanka/express-mesto-gha
 
