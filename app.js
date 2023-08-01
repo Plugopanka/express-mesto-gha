@@ -4,7 +4,8 @@ const bodyParser = require('body-parser');
 const { celebrate, Joi, errors } = require('celebrate');
 
 require('dotenv').config();
-const { ERROR_NOT_FOUND, ERROR_ON_SERVER } = require('./errors/errors');
+const { ERROR_ON_SERVER } = require('./errors/errors');
+const NotFoundError = require('./errors/NotFoundError');
 const { login, createUser } = require('./controllers/users');
 const auth = require('./middlewares/auth');
 
@@ -42,22 +43,23 @@ app.post(
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
       avatar: Joi.string().pattern(
-        /^https?:\/\/(www\.)?[a-zA-Z0-9\._%+-]+@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/,
+        /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/,// eslint-disable-line
       ),
     }),
   }),
   createUser,
 );
 
-app.use('/*', (req, res) => {
-  res.status(ERROR_NOT_FOUND).send({
-    message: 'Страница не найдена',
-  });
+app.use('/*', auth, (req, res, next) => {
+  if (err.message === 'NotFound') {
+    next(new NotFoundError('Страница не найдена'));
+  }
+  next(err);
 });
 
 app.use(errors());
 
-app.use((err, req, res) => {
+app.use((err, req, res, next) => {
   const { statusCode = ERROR_ON_SERVER, message } = err;
   res.status(statusCode).send({
     message: statusCode === ERROR_ON_SERVER ? 'Произошла ошибка' : message,

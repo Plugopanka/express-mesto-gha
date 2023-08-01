@@ -24,7 +24,7 @@ router.get(
   '/:userId',
   celebrate({
     params: Joi.object().keys({
-      id: Joi.string().length(24).hex().required(),
+      userId: Joi.string().length(24).hex().required(),
     }),
   }),
   getUserId,
@@ -34,7 +34,7 @@ router.patch(
   celebrate({
     body: Joi.object().keys({
       avatar: Joi.string().pattern(
-        /^https?:\/\/(www\.)?[a-zA-Z0-9\._%+-]+@([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/,
+        /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/,// eslint-disable-line
       ),
     }),
   }),
