@@ -56,7 +56,7 @@ app.use('/*', auth, (req, res, next) => {
 
 app.use(errors());
 
-app.use((err, req, res, next) => {
+app.use((err, req, res, next) => {// eslint-disable-line
   const { statusCode = ERROR_ON_SERVER, message } = err;
   res.status(statusCode).send({
     message: statusCode === ERROR_ON_SERVER ? 'Произошла ошибка' : message,
