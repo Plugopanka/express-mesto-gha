@@ -12,22 +12,17 @@ const RequestConflict = require('../errors/RequestConflict');
 module.exports.getUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.send({ data: users }))
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 module.exports.getUser = (req, res, next) => {
-  const { userId } = req.user;
+  const { userId } = req.user._id;
   User.findById(userId)
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
+    .orFail(() => new NotFoundError('Пользователь с указанным _id не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Передан некорректный _id пользователя'));
-      }
-      if (err.message === 'NotFound') {
-        return next(new NotFoundError('Пользователь с указанным _id не найден'));
       }
 
       return next(err);
@@ -67,16 +62,11 @@ module.exports.createUser = (req, res, next) => {
 
 module.exports.getUserId = (req, res, next) => {
   User.findById(req.params.userId)
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
+    .orFail(() => new NotFoundError('Пользователь с указанным _id не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(new BadRequestError('Передан некорректный _id пользователя'));
-      }
-      if (err.message === 'NotFound') {
-        return next(new NotFoundError('Пользователь с указанным _id не найден'));
       }
 
       return next(err);
@@ -93,9 +83,7 @@ module.exports.changeUserInfo = (req, res, next) => {
       runValidators: true,
     },
   )
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
+    .orFail(() => new NotFoundError('Пользователь с указанным _id не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -104,10 +92,6 @@ module.exports.changeUserInfo = (req, res, next) => {
             'Переданы некорректные данные при обновлении профиля',
           ),
         );
-      }
-
-      if (err.message === 'NotFound') {
-        return next(new NotFoundError('Пользователь с указанным _id не найден'));
       }
 
       return next(err);
@@ -124,9 +108,7 @@ module.exports.changeUserAvatar = (req, res, next) => {
       runValidators: true,
     },
   )
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
+    .orFail(() => new NotFoundError('Пользователь с указанным _id не найден'))
     .then((user) => res.send({ data: user }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -135,10 +117,6 @@ module.exports.changeUserAvatar = (req, res, next) => {
             'Переданы некорректные данные при обновлении аватара',
           ),
         );
-      }
-
-      if (err.message === 'NotFound') {
-        return next(new NotFoundError('Пользователь с указанным _id не найден'));
       }
 
       return next(err);

@@ -7,6 +7,7 @@ const {
   changeUserInfo,
   changeUserAvatar,
 } = require('../controllers/users');
+const regex = require('../utils/constants');
 
 router.get('/', getUsers);
 router.get('/me', getUser);
@@ -33,9 +34,7 @@ router.patch(
   '/me/avatar',
   celebrate({
     body: Joi.object().keys({
-      avatar: Joi.string().pattern(
-        /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/,// eslint-disable-line
-      ),
+      avatar: Joi.string().pattern(regex),
     }),
   }),
   changeUserAvatar,

@@ -25,7 +25,7 @@ module.exports = (req, res, next) => {
       NODE_ENV === 'production' ? JWT_SECRET : 'secret',
     );
   } catch (err) {
-    return handleAuthError(res);
+    return handleAuthError(res, next);
   }
 
   req.user = payload;

@@ -7,7 +7,7 @@ const ForbiddenError = require('../errors/ForbiddenError');
 module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send({ data: cards }))
-    .catch((err) => next(err));
+    .catch(next);
 };
 
 module.exports.createCard = (req, res, next) => {
@@ -30,11 +30,9 @@ module.exports.createCard = (req, res, next) => {
 
 module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
+    .orFail(() => new NotFoundError('Карточка с указанным _id не найдена'))
     .then((card) => {// eslint-disable-line
-      if (!String(card.owner) !== String(req.user._id)) {
+      if (String(card.owner) !== String(req.user._id)) {
         return next(new ForbiddenError('Нет доступа для удаления карточки'));
       }
       Card.deleteOne()
@@ -49,9 +47,6 @@ module.exports.deleteCard = (req, res, next) => {
           ),
         );
       }
-      if (err.message === 'NotFound') {
-        return next(new NotFoundError('Карточка с указанным _id не найдена'));
-      }
 
       return next(err);
     });
@@ -63,9 +58,7 @@ module.exports.likeCard = (req, res, next) => {
     { $addToSet: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
+    .orFail(() => new NotFoundError('Карточка с указанным _id не найдена'))
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -74,10 +67,6 @@ module.exports.likeCard = (req, res, next) => {
             'Переданы некорректные данные для постановки лайка',
           ),
         );
-      }
-
-      if (err.message === 'NotFound') {
-        next(new NotFoundError('Передан несуществующий _id карточки'));
       }
 
       return next(err);
@@ -90,19 +79,13 @@ module.exports.dislikeCard = (req, res, next) => {
     { $pull: { likes: req.user._id } },
     { new: true },
   )
-    .orFail(() => {
-      throw new Error('NotFound');
-    })
+    .orFail(() => new NotFoundError('Карточка с указанным _id не найдена'))
     .then((card) => res.send({ data: card }))
     .catch((err) => {
       if (err.name === 'CastError') {
         return next(
           new BadRequestError('Переданы некорректные данные для снятия лайка'),
         );
-      }
-
-      if (err.message === 'NotFound') {
-        return next(new NotFoundError('Передан несуществующий _id карточки'));
       }
 
       return next(err);
