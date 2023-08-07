@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const { errors } = require('celebrate');
 
 require('dotenv').config();
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 const { ERROR_ON_SERVER } = require('./errors/errors');
 
 const { PORT = 3000 } = process.env;
@@ -18,7 +19,11 @@ mongoose.connect('mongodb://0.0.0.0:27017/mestodb', {
   useUnifiedTopology: true,
 });
 
+app.use(requestLogger);
+
 app.use(require('./routes/index'));
+
+app.use(errorLogger);
 
 app.use(errors());
 
